@@ -1,5 +1,8 @@
 # FSBLUP
 
+<!-- badges: start -->
+<!-- badges: end -->
+
 ## **F**usion **S**imilarity **M**atrix **B**est **L**inear **U**nbiased **P**rediction
 
 ## Contents
@@ -19,13 +22,15 @@
     -   [Advanced](#advanced)
 -   [OUTPUT](#output)
 
-## Overview {#overview}
+------------------------------------------------------------------------
+
+## Overview
 
 `FSBLUP` is a novel strategy of fusion similarity matrix based on genomic and intermediate omics information, to estimate the unique genetic correlation of different data with target phenotype systematically and adapt the genetic architecture of complex traits jointly, by a machine learning-based method incorporating cross-validation, grid search, and adaptive bisection algorithms.
 
-## GETTING STARTED {#getting-started}
+## GETTING STARTED
 
-### Installation {#installation}
+### Installation
 
 You can install the development version of `FSBLUP` like so:
 
@@ -42,7 +47,7 @@ library(FSBLUP)
 
 Typing `?FSBLUP` could get the details of all parameters.
 
-### Test datasets {#test-datasets}
+### Test datasets
 
 The example data can be downloaded by typing:
 
@@ -51,9 +56,9 @@ wget https://github.com/CAU-TeamLiuJF/FSBLUP/releases/download/1.0.1/example.zip
 unzip example.zip
 ```
 
-## Data input {#data-input}
+## Data input
 
-### Phenotype data {#phenotype-data}
+### Phenotype data
 
 The phenotype should be a `data.frame` contain a header row, e.g. trait names. The missing values should be denoted by NA, which will be treated as candidates. Notice that only the numeric values are allowed and the characters will not be recognized. The first column should be IDs.
 
@@ -66,7 +71,7 @@ The phenotype should be a `data.frame` contain a header row, e.g. trait names. T
 |    NA     |    NA     | NA  | NA  |    NA    |
 |    ...    |    ...    | ... | ... |   ...    |
 
-### Kinship data {#kinship-data}
+### Kinship data
 
 `FSBLUP` accept kinship matrix instead of original data as input. The matrices should be ${n}\times{n}$ that represents the relationship among individuals.
 
@@ -84,7 +89,7 @@ It could be also supplied by the users, however, in this case, the order of indi
 |  6  | 0.19 | -0.21 | 0.00  | -0.13 | 0.08  | 0.96  | ... |
 | ... | ...  |  ...  |  ...  |  ...  |  ...  |  ...  | ... |
 
-### Pedigree data {#pedigree-data}
+### Pedigree data
 
 The pedigree should be a `data.frame` or `matrix` structure, which will be used to determine additive genetic relationships. The pedigree should include three columns:
 
@@ -107,7 +112,7 @@ The pedigree should be a `data.frame` or `matrix` structure, which will be used 
 |  7  |  2   |  6  |
 |  8  |  3   |  6  |
 
-### Genotype data {#genotype-data}
+### Genotype data
 
 The genotype should be a `data.frame` or `matrix` structure, which will be used to construct the genomic relationship matrix. The individual IDs should be row names, followed by the genotype encoding for each marker in each column. The individual IDs must match those specified in the pedigree.
 
@@ -124,7 +129,7 @@ In genotype encoding, `0` and `2` represent the two homozygotes, while `1` repre
 |  5  |  0   |  0   |  0   |  0   |  0   |  …  |  0   |
 | ... | ...  | ...  | ...  | ...  | ...  | ... | ...  |
 
-### Intermediate omics data {#intermediate-omics-data}
+### Intermediate omics data
 
 The intermediate omics should be a `data.frame` or `matrix` structure, which will be used to construct the omics similarity matrix, with $O = \frac{MM'}{N}$, where `M` is the omics feature measures (individual as rows, measures as columns), `N` represents feature numbers.
 
@@ -142,9 +147,9 @@ The individual IDs should be row names, followed by the omics feature measures f
 |  6  | 11.87 | 12.42 | 9.79  | 10.78 | 8.97  | ... | 10.48 |
 | ... |  ...  |  ...  |  ...  |  ...  |  ...  | ... |  ...  |
 
-## USAGE {#usage}
+## USAGE
 
-### Basic {#basic}
+### Basic
 
 To run `FSBLUP`, several basic data should provide: the phenotype data (IDs in first column) and three matrices (IDs in row and col names) or pedigree (three columns: ID\|Sire\|Dam), genomic (IDs in row names), and omics data (IDs in row names). `FSBLUP` will try to adjust same order for data before analysis.
 
@@ -213,7 +218,7 @@ fs = FSBLUP(phe = phenotype, trait_col = 2, M1 = A_mat, M2 = G_mat, M3 = O_mat, 
 # po.bi.threshold: the threshold between two iterations, stop bisection if reaches, default 1e-4
 ```
 
-### Advanced {#advanced}
+### Advanced
 
 7.  Only to optimize a fusion matrix
 
@@ -258,16 +263,20 @@ fs = FSBLUP(phe = phenotype, trait_col = 2, M1 = A_mat, M2 = G_mat, M3 = O_mat, 
 # e.g. fn = function(X1, X2) {val = cor(X1, X2); return(val)}
 ```
 
-## OUTPUT {#output}
+## OUTPUT
 
-`FSBLUP` default return GEBVs a named vector:
+`FSBLUP` default return a list including: genetic variance (Vu), residual variance (Ve), coefficients of all fixed effects (beta), predicted GEBVs (u), maximized log-likelihood (LL)
 
 ``` r
 > str(fs)
-num [1:1631, 1] -90.019 0.997 -63.775 94.4 117.305 ...
-..- attr(*, "dimnames")=List of 2
-  .. ..$ : NULL
-  .. ..$ : chr "t1"
+List of 5
+ $ Vu  : num 3.19
+ $ Ve  : num 213
+ $ beta: num [1(1d)] 1.11
+ $ u   : num [1:198(1d)] -0.928 -0.51 0.421 0.378 0.449 ...
+  ..- attr(*, "dimnames")=List of 1
+  .. ..$ : chr [1:198] "754" "986" "993" "994" ...
+ $ LL  : num -809
 ```
 
 Once use `return.matrix = TRUE` parameters, the returns will change to:
