@@ -52,7 +52,7 @@ Typing `?FSBLUP` could get the details of all parameters.
 The example data can be downloaded by typing:
 
 ``` bash
-wget https://github.com/Xueyh1/FSBLUP/releases/download/example/example.zip
+wget https://github.com/CAU-TeamLiuJF/FSBLUP/releases/download/example/example.zip
 unzip example.zip
 ```
 
