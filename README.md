@@ -12,9 +12,9 @@
     -   [Installation](#installation)
     -   [Test datasets](#test-datasets)
 -   [Data input](#data-input)
-    -   [Phenotype data](#phenotype-data)/
+    -   [Phenotype data](#phenotype-data)
     -   [Kinship data](#kinship-data)
-    -   [Pedigree data](#pedigree-data)/
+    -   [Pedigree data](#pedigree-data)
     -   [Genotype data](#genotype-data)
     -   [Intermediate omics data](#intermediate-omics-data)
 -   [USAGE](#usage)

@@ -13,7 +13,7 @@ FSBLUP(
   snp = NULL,
   omic = NULL,
   FPKM.qc = TRUE,
-  cov = NULL,
+  fix.col = NULL,
   trait_col = NULL,
   po.crv.num = 5,
   po.crv.rep.num = 2,
@@ -21,7 +21,7 @@ FSBLUP(
   po.ngen = NULL,
   po.gs.point_num = 25,
   po.bi.max_iter = 10,
-  po.bi.threshold = 0.0001,
+  po.bi.threshold = 1e-04,
   stas.type = "cor",
   stas.fn = NULL,
   stas.phe.col = NULL,
@@ -42,6 +42,10 @@ FSBLUP(
 \item{snp}{snp data.frame, individuals(row) * snps(col)}
 
 \item{omic}{omic data.frame, individuals(row) * omic features(col)}
+
+\item{FPKM.qc}{if omic data is transcriptomics FPKM format data, will delete transcript <0.1 in more than 95\% individuals.}
+
+\item{fix.col}{column number of fixed effects in phenotype, e.g. c(2, 3)}
 
 \item{trait_col}{analysis trait in the \code{phe}, col number or name}
 

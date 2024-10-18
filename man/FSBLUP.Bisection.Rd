@@ -8,7 +8,7 @@ FSBLUP.Bisection(
   acc_df,
   fn,
   max_iter = 10,
-  threshold = 0.0001,
+  threshold = 1e-04,
   phe_ab,
   trait,
   M1,

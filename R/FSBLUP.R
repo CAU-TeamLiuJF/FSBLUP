@@ -712,13 +712,15 @@ FSBLUP.Omatrix <- function(data = NULL, missing.value = NA, FPKM.qc = FALSE) {
 #' @param stas.type indicator when optimize the fusion matrix
 #' @param stas.fn custom calculated indicators
 #' @param return.matrix default `T` return fusion matrix, `F` return predicted EBVs
+#' @param FPKM.qc if omic data is transcriptomics FPKM format data, will delete transcript <0.1 in more than 95% individuals.
+#' @param fix.col column number of fixed effects in phenotype, e.g. c(2, 3)
 #'
 #' @return matrix
 #' @export
 #'
 
 FSBLUP <- function(
-    phe = NULL, M1 = NULL, M2 = NULL, M3 = NULL, pedi = NULL, snp = NULL, omic = NULL, FPKM.qc = TRUE, cov = NULL,
+    phe = NULL, M1 = NULL, M2 = NULL, M3 = NULL, pedi = NULL, snp = NULL, omic = NULL, FPKM.qc = TRUE, fix.col = NULL,
     trait_col = NULL, po.crv.num = 5, po.crv.rep.num=2, po.year = NULL, po.ngen = NULL,
     po.gs.point_num = 25, po.bi.max_iter = 10, po.bi.threshold = 1e-4,
     stas.type = "cor", stas.fn = NULL, stas.phe.col = NULL, return.matrix = FALSE
@@ -756,6 +758,11 @@ FSBLUP <- function(
   M1_cv <- M1[rownames(M1) %in% RFid, colnames(M1) %in% RFid]
   M2_cv <- M2[rownames(M2) %in% RFid, colnames(M2) %in% RFid]
   M3_cv <- M3[rownames(M3) %in% RFid, colnames(M3) %in% RFid]
+
+  if(!is.null(fix.col)) {
+    cov <- phe[, fix.col]
+    cov <- matrix(cov)
+  }
 
   if(!is.null(po.crv.num))
   {
