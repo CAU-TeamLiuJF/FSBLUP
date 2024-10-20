@@ -159,7 +159,7 @@ To run `FSBLUP`, several basic data should provide: the phenotype data (IDs in f
 ```r
 library(tidyverse)
 library(FSBLUP)
-phenotype = A_mat = read.csv("../test/test_pheno.csv")
+phenotype = read.csv("../test/test_pheno.csv")
 pedi = read.csv("../test/test_pedi.csv")
 snp = read.csv("../test/test_snp.csv") %>% column_to_rownames(colnames(.)[1]) %>% as.matrix()
 omic = read.csv("../test/test_omic.csv") %>% column_to_rownames(colnames(.)[1]) %>% as.matrix()
