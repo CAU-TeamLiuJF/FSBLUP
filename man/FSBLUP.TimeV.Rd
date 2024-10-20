@@ -10,7 +10,7 @@ FSBLUP.TimeV(
   M2,
   M3,
   trait_col,
-  cov,
+  fixed_eff,
   train.id,
   test.id,
   gs.point_num,

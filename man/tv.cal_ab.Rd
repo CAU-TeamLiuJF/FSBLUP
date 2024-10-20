@@ -10,7 +10,7 @@ tv.cal_ab(
   M1,
   M2,
   M3,
-  cov,
+  fixed_eff,
   a,
   b,
   RP.id = NULL,

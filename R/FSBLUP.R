@@ -18,14 +18,15 @@ FSBLUP.Mix <- function(
 }
 
 FSBLUP.version <- function() {
-cat("#----------------------------------------#\n")
-cat("#  _____ ____  ____  _    _   _ ____     #\n")
-cat("#  |  ___/ ___|| __ )| |  | | | |  _ \\   #\n")
-cat("#  | |_  \\___ \\|  _ \\| |  | | | | |_) |  #\n")
-cat("#  |  _|  ___) | |_) | |__| |_| |  __/   #\n")
-cat("#  |_|   |____/|____/|_____\\___/|_|      #\n")
-cat("#                                        #\n")
-cat("#----------------------------------------#\n")
+cat("#----------------------------------------------------#\n")
+cat("#         _____ ____  ____  _    _   _ ____          #\n")
+cat("#         |  ___/ ___|| __ )| |  | | | |  _ \\        #\n")
+cat("#         | |_  \\___ \\|  _ \\| |  | | | | |_) |       #\n")
+cat("#         |  _|  ___) | |_) | |__| |_| |  __/        #\n")
+cat("#         |_|   |____/|____/|_____\\___/|_|           #\n")
+cat("#                                                    #\n")
+cat("#  Website: https://github.com/CAU-TeamLiuJF/FSBLUP  #\n")
+cat("#----------------------------------------------------#\n")
 }
 
 
@@ -56,7 +57,7 @@ cat("#----------------------------------------#\n")
 #' @importFrom purrr map2_dfr
 #'
 FSBLUP.GridSearch <- function(
-    fn, x = c(0, 1), y = c(0, 1), point_num = 25, phe_ab, trait, M1, M2, M3, cov, crv.num, crv.rep.num,
+    fn, x = c(0, 1), y = c(0, 1), point_num = 25, phe_ab, trait, M1, M2, M3, fixed_eff, crv.num, crv.rep.num,
     stas.phe.col, stas.type, stas.fn, train.id = NULL, test.id = NULL, ...
 )
 {
@@ -71,12 +72,12 @@ FSBLUP.GridSearch <- function(
   #acc_df <- map2_dfr(para_df$a, para_df$b, ~fn(.x, .y, ...))
   if(length(train.id) == 0 & length(test.id) == 0)
   {
-    acc_df <- map2_dfr(para_df$a, para_df$b, ~fn(phe_ab = phe_ab, trait = trait, M1 = M1, M2 = M2, M3 = M3, cov = cov,
+    acc_df <- map2_dfr(para_df$a, para_df$b, ~fn(phe_ab = phe_ab, trait = trait, M1 = M1, M2 = M2, M3 = M3, fixed_eff = fixed_eff,
                                                  a = .x, b = .y, crv.num = crv.num, crv.rep.num = crv.rep.num,
                                                  stas.phe.col = stas.phe.col, stas.type = stas.type, stas.fn = stas.fn), .progress = T)
   } else if(!(length(train.id) == 0 & length(test.id) == 0))
   {
-    acc_df <- map2_dfr(para_df$a, para_df$b, ~fn(phe_ab = phe_ab, trait = trait, M1 = M1, M2 = M2, M3 = M3, cov = cov,
+    acc_df <- map2_dfr(para_df$a, para_df$b, ~fn(phe_ab = phe_ab, trait = trait, M1 = M1, M2 = M2, M3 = M3, fixed_eff = fixed_eff,
                                                  a = .x, b = .y, RP.id = train.id, VP.id = test.id,
                                                  stas.phe.col = stas.phe.col, stas.type = stas.type, stas.fn = stas.fn), .progress = T)
   } else {
@@ -115,7 +116,7 @@ FSBLUP.GridSearch <- function(
 #'
 
 FSBLUP.Bisection <- function(
-  acc_df, fn, max_iter = 10, threshold = 1e-4, phe_ab, trait, M1, M2, M3, cov, crv.num, crv.rep.num,
+  acc_df, fn, max_iter = 10, threshold = 1e-4, phe_ab, trait, M1, M2, M3, fixed_eff, crv.num, crv.rep.num,
   stas.phe.col, stas.type, stas.fn, train.id = NULL, test.id = NULL, ...
 )
 {
@@ -139,14 +140,14 @@ FSBLUP.Bisection <- function(
     if(length(train.id) == 0 & length(test.id) == 0)
     {
       new_cor <- map_dfr(1:nrow(new_points), ~ fn(a = new_points$a[.], b = new_points$b[.],
-                                                  phe_ab = phe_ab, trait = trait, M1 = M1, M2 = M2, M3 = M3, cov = cov,
+                                                  phe_ab = phe_ab, trait = trait, M1 = M1, M2 = M2, M3 = M3, fixed_eff = fixed_eff,
                                                   crv.num = crv.num, crv.rep.num = crv.rep.num,
                                                   stas.phe.col = stas.phe.col, stas.type = stas.type, stas.fn = stas.fn))
       cli::cli_progress_update()
     } else if(!(length(train.id) == 0 & length(test.id) == 0))
     {
       new_cor <- map_dfr(1:nrow(new_points), ~ fn(a = new_points$a[.], b = new_points$b[.],
-                                                  phe_ab = phe_ab, trait = trait, M1 = M1, M2 = M2, M3 = M3, cov = cov,
+                                                  phe_ab = phe_ab, trait = trait, M1 = M1, M2 = M2, M3 = M3, fixed_eff = fixed_eff,
                                                   RP.id = train.id, VP.id = test.id,
                                                   stas.phe.col = stas.phe.col, stas.type = stas.type, stas.fn = stas.fn))
       cli::cli_progress_update()
@@ -220,9 +221,12 @@ FSBLUP.CombineMat <- function(
   phe_c, M1, M2, M3, a, b
 )
 {
-  id_1 <- colnames(M1)
-  id_2 <- colnames(M2)
-  id_3 <- colnames(M3)
+  id_1 <- as.character(rownames(M1))
+  colnames(M1) = id_1
+  id_2 <- as.character(rownames(M2))
+  colnames(M2) = id_2
+  id_3 <- as.character(rownames(M3))
+  colnames(M3) = id_3
 
   C.mode <- NULL
 
@@ -231,8 +235,8 @@ FSBLUP.CombineMat <- function(
 
   #cat(dim(M1),dim(M2),dim(M3))
   AA000 <- function(phe_c, M1, M2, M3, a, b){
-    M2 <- M2[rownames(M1), colnames(M1)]
-    M3 <- M3[rownames(M1), colnames(M1)]
+    M2 <- M2[as.character(rownames(M1)), as.character(colnames(M1))]
+    M3 <- M3[as.character(rownames(M1)), as.character(colnames(M1))]
     k <- a*M3+b*M2+(1-a-b)*M1
     return(k)
   }
@@ -268,7 +272,7 @@ FSBLUP.CombineMat <- function(
     H <- cbind(rbind(H11, H21), rbind(H12, M3))
     H <- H / mean(diag(H))
 
-    M1 <- M1[rownames(H), colnames(H)]
+    M1 <- M1[as.character(rownames(H)), as.character(colnames(H))]
     H <- b*H+(1-b)*M1
     #H <- adj_pos(H)
 
@@ -415,7 +419,7 @@ FSBLUP.stas.cal <- function(
 #'
 
 cv.cal_ab <- function(
-    phe_ab, trait, M1, M2, M3, cov, a, b, crv.num, crv.rep.num, stas.phe.col = NULL, stas.type, stas.fn, ...
+    phe_ab, trait, M1, M2, M3, fixed_eff, a, b, crv.num, crv.rep.num, stas.phe.col = NULL, stas.type, stas.fn, ...
 )
 {
   suppressMessages(require(rrBLUP))
@@ -433,7 +437,7 @@ cv.cal_ab <- function(
 
   kk <- FSBLUP.CombineMat(phe_c = phe_ab, M1 = M1, M2 = M2, M3 = M3, a = a, b = b)
 
-  kk <- kk[as.character(phe_ab$id), as.character(phe_ab$id)]
+  #kk <- kk[as.character(phe_ab$id), as.character(phe_ab$id)]
 
   results <- data.frame()
   for (xi in seq_len(crv.rep.num)) {
@@ -446,7 +450,7 @@ cv.cal_ab <- function(
       xnas <- phe_ab$xpar == xj
       phe_ab$yNA0[xnas] <- NA
 
-      res_k <- tryCatch(mixed.solve(phe_ab$yNA0, X = cov, K = kk), error = {kk=adj_pos(kk);mixed.solve(phe_ab$yNA0, X = cov, K = kk)})
+      res_k <- tryCatch(mixed.solve(phe_ab$yNA0, X = fixed_eff, K = kk), error = {kk=adj_pos(kk);mixed.solve(phe_ab$yNA0, X = fixed_eff, K = kk)})
       res_k <- res_k$u[xnas]
 
       if(is.null(stas.phe.col)) x1oo00oo <- phe_ab$y0[xnas]
@@ -498,7 +502,7 @@ cv.cal_ab <- function(
 #'
 
 tv.cal_ab <- function(
-    phe_ab, trait, M1, M2, M3, cov, a, b, RP.id = NULL, VP.id = NULL, stas.phe.col = NULL, stas.type, stas.fn, ...
+    phe_ab, trait, M1, M2, M3, fixed_eff, a, b, RP.id = NULL, VP.id = NULL, stas.phe.col = NULL, stas.type, stas.fn, ...
 )
 {
   suppressMessages(require(rrBLUP))
@@ -520,7 +524,7 @@ tv.cal_ab <- function(
   xnas <- phe_ab$xpar == "test"
   phe_ab$yNA0[xnas] <- NA
 
-  res_k <- tryCatch(mixed.solve(phe_ab$yNA0, X = cov, K = kk), error = {kk=adj_pos(kk);mixed.solve(phe_ab$yNA0, X = cov, K = kk)})
+  res_k <- tryCatch(mixed.solve(phe_ab$yNA0, X = fixed_eff, K = kk), error = {kk=adj_pos(kk);mixed.solve(phe_ab$yNA0, X = fixed_eff, K = kk)})
   res_k <- res_k$u[xnas]
 
   if(is.null(stas.phe.col)) x1oo00oo <- phe_ab$y0[xnas]
@@ -568,7 +572,7 @@ tv.cal_ab <- function(
 #'
 
 FSBLUP.CrossV <- function(
-    phe_cv, M1, M2, M3, trait_col, cov, crv.num, crv.rep.num, gs.point_num, bi.max_iter, bi.threshold, stas.phe.col, stas.type, stas.fn
+    phe_cv, M1, M2, M3, trait_col, fixed_eff, crv.num, crv.rep.num, gs.point_num, bi.max_iter, bi.threshold, stas.phe.col, stas.type, stas.fn
 )
 {
 
@@ -586,12 +590,12 @@ FSBLUP.CrossV <- function(
 
   cat("Start grid search procedure ... \n")
   find_ab <- FSBLUP.GridSearch(fn = cv.cal_ab, x = c(0,1),y = c(0,1), point_num = gs.point_num,
-                                   phe_ab = phe_cv, trait = y, M1 = M1, M2 = M2, M3 = M3, cov = cov,
+                                   phe_ab = phe_cv, trait = y, M1 = M1, M2 = M2, M3 = M3, fixed_eff = fixed_eff,
                                   crv.num = crv.num, crv.rep.num = crv.rep.num,
                                   stas.phe.col = stas.phe.col, stas.type = stas.type, stas.fn = stas.fn)
   cat("Start bisection procedure ... \n")
   find_ab <- FSBLUP.Bisection(find_ab, fn = cv.cal_ab, max_iter = bi.max_iter, threshold = bi.threshold,
-                                 phe_ab = phe_cv, trait = y, M1 = M1, M2 = M2, M3 = M3, cov = cov,
+                                 phe_ab = phe_cv, trait = y, M1 = M1, M2 = M2, M3 = M3, fixed_eff = fixed_eff,
                                  crv.num = crv.num, crv.rep.num = crv.rep.num,
                                  stas.phe.col = stas.phe.col, stas.type = stas.type, stas.fn = stas.fn)
 
@@ -619,7 +623,7 @@ FSBLUP.CrossV <- function(
 #'
 
 FSBLUP.TimeV <- function(
-    phe_cv, M1, M2, M3, trait_col, cov, train.id, test.id, gs.point_num, bi.max_iter, bi.threshold, stas.phe.col, stas.type, stas.fn
+    phe_cv, M1, M2, M3, trait_col, fixed_eff, train.id, test.id, gs.point_num, bi.max_iter, bi.threshold, stas.phe.col, stas.type, stas.fn
 )
 {
 
@@ -637,12 +641,12 @@ FSBLUP.TimeV <- function(
 
   cat("Start grid search with ", gs.point_num, " points ... ")
   find_ab <- FSBLUP.GridSearch(fn = tv.cal_ab, x = c(0,1),y = c(0,1), point_num = gs.point_num,
-                                  phe_ab = phe_cv, trait = y, M1 = M1, M2 = M2, M3 = M3, cov = cov,
+                                  phe_ab = phe_cv, trait = y, M1 = M1, M2 = M2, M3 = M3, fixed_eff = fixed_eff,
                                   train.id = train.id, test.id = test.id,
                                   stas.phe.col = stas.phe.col, stas.type = stas.type, stas.fn = stas.fn)
   cat("Start bisection procedures ... ")
   find_ab <- FSBLUP.Bisection(find_ab, fn = tv.cal_ab, max_iter = bi.max_iter, threshold = bi.threshold,
-                                 phe_ab = phe_cv, trait = y, M1 = M1, M2 = M2, M3 = M3, cov = cov,
+                                 phe_ab = phe_cv, trait = y, M1 = M1, M2 = M2, M3 = M3, fixed_eff = fixed_eff,
                                  train.id = train.id, test.id = test.id,
                                  stas.phe.col = stas.phe.col, stas.type = stas.type, stas.fn = stas.fn)
   return(find_ab)
@@ -760,14 +764,16 @@ FSBLUP <- function(
   M3_cv <- M3[rownames(M3) %in% RFid, colnames(M3) %in% RFid]
 
   if(!is.null(fix.col)) {
-    cov <- phe[, fix.col]
-    cov <- matrix(cov)
+    fixed_eff <- phe[, fix.col]
+    fixed_eff <- as.matrix(fixed_eff)
+  } else {
+    fixed_eff <- NULL
   }
 
   if(!is.null(po.crv.num))
   {
     cat("\nStart optimizing Fusion Similarity matrix ..\n")
-    opt <- FSBLUP.CrossV(phe_cv = phe_cv, trait_col = trait_col, M1 = M1_cv, M2 = M2_cv, M3 = M3_cv, cov = cov,
+    opt <- FSBLUP.CrossV(phe_cv = phe_cv, trait_col = trait_col, M1 = M1_cv, M2 = M2_cv, M3 = M3_cv, fixed_eff = fixed_eff,
                             crv.num = po.crv.num, crv.rep.num = po.crv.rep.num, gs.point_num = po.gs.point_num,
                             bi.max_iter = po.bi.max_iter, bi.threshold = po.bi.threshold,
                             stas.type = stas.type, stas.fn = stas.fn, stas.phe.col = stas.phe.col)
@@ -793,7 +799,7 @@ FSBLUP <- function(
     if(length(train.id) == 0 | length(test.id) == 0) stop("\n\n In parameter optimization procedure, train or test population contains 0 individuals, please check input parameters (e.g. po.year, po.ngen) !!! \n\n")
 
     cat("Start optimize Fusion Similarity matrix \n")
-    opt <- FSBLUP.TimeV(phe_cv = phe_cv, trait_col = trait_col, M1 = M1_cv, M2 = M2_cv, M3 = M3_cv, cov = cov,
+    opt <- FSBLUP.TimeV(phe_cv = phe_cv, trait_col = trait_col, M1 = M1_cv, M2 = M2_cv, M3 = M3_cv, fixed_eff = fixed_eff,
                            train.id = train.id, test.id = test.id, gs.point_num = po.gs.point_num,
                            bi.max_iter = po.bi.max_iter, bi.threshold = po.bi.threshold,
                            stas.type = stas.type, stas.fn = stas.fn, stas.phe.col = stas.phe.col)

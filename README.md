@@ -153,6 +153,22 @@ The individual IDs should be row names, followed by the omics feature measures f
 
 To run `FSBLUP`, several basic data should provide: the phenotype data (IDs in first column) and three matrices (IDs in row and col names) or pedigree (three columns: ID\|Sire\|Dam), genomic (IDs in row names), and omics data (IDs in row names). `FSBLUP` will try to adjust same order for data before analysis.
 
+
+0. Read example data 
+
+```r
+library(tidyverse)
+library(FSBLUP)
+phenotype = A_mat = read.csv("../test/test_pheno.csv")
+pedi = read.csv("../test/test_pedi.csv")
+snp = read.csv("../test/test_snp.csv") %>% column_to_rownames(colnames(.)[1]) %>% as.matrix()
+omic = read.csv("../test/test_omic.csv") %>% column_to_rownames(colnames(.)[1]) %>% as.matrix()
+A_mat = read.csv("../test/test_matA.csv")  %>% column_to_rownames(colnames(.)[1]) %>% as.matrix()
+G_mat = read.csv("../test/test_matG.csv") %>% column_to_rownames(colnames(.)[1]) %>% as.matrix()
+O_mat = read.csv("../test/test_matO.csv") %>% column_to_rownames(colnames(.)[1]) %>% as.matrix()
+
+```
+
 1.  Run with supplied matrices
 
 ``` r
@@ -165,7 +181,7 @@ fs = FSBLUP(phe = phenotype, trait_col = 2, M1 = A_mat, M2 = G_mat, M3 = O_mat)
 2.  Run with origin data
 
 ``` r
-fs = FSBLUP(phe = phenotype, trait_col = 2, pedi = pedigree, snp = snp, omic = omic, FPKM.qc = TRUE)
+fs = FSBLUP(phe = phenotype, trait_col = 2, pedi = pedi, snp = snp, omic = omic, FPKM.qc = TRUE)
 # phe: phenotype
 # trait_col, the column number of predicted phenotype
 # pedi: pedigree data (three columns: ID\Sire\Dam)

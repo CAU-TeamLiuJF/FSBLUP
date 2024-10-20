@@ -10,7 +10,7 @@ FSBLUP.CrossV(
   M2,
   M3,
   trait_col,
-  cov,
+  fixed_eff,
   crv.num,
   crv.rep.num,
   gs.point_num,

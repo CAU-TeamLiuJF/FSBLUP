@@ -14,7 +14,7 @@ FSBLUP.Bisection(
   M1,
   M2,
   M3,
-  cov,
+  fixed_eff,
   crv.num,
   crv.rep.num,
   stas.phe.col,

@@ -1,6 +1,6 @@
 Package: FSBLUP
 Title: Fusion similiarity matrix for genetic prediction
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person("Yahui", "Xue", , "xue_yh@live.cn", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
