@@ -1,11 +1,12 @@
 # FSBLUP
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 ## **F**usion **S**imilarity **M**atrix **B**est **L**inear **U**nbiased **P**rediction
 
-## Contents
+## CONTENES
 
 -   [OVERVIEW](#overview)
 -   [GETTING STARTED](#getting-started)
@@ -24,11 +25,17 @@
 
 ------------------------------------------------------------------------
 
-## Overview
+## OVERVIEW
 
 `FSBLUP` is a novel strategy of fusion similarity matrix based on genomic and intermediate omics information, to estimate the unique genetic correlation of different data with target phenotype systematically and adapt the genetic architecture of complex traits jointly, by a machine learning-based method incorporating cross-validation, grid search, and adaptive bisection algorithms.
 
 ## GETTING STARTED
+
+***`FSBLUP`*** is implemented in R, and for faster computation with large datasets, it is recommended to link R with either the Math Kernel Library (MKL) or OpenBLAS. Both MKL and OpenBLAS can accelerate the BLAS/LAPACK library using multi-threading capabilities, significantly reducing computational time. Integrating MKL or OpenBLAS with R can improve performance by automatically optimizing matrix operations across multiple threads. Detailed instructions are available on how to link R with these libraries to achieve enhanced computational efficiency.
+
+> 1. [how to link MKL with R](https://www.intel.com/content/www/us/en/developer/articles/technical/quick-linking-intel-mkl-blas-lapack-to-r.html)
+
+> 2. [how to link OpenBLAS with R](https://stackoverflow.com/questions/74086774/build-r-with-openblas)
 
 ### Installation
 
@@ -56,7 +63,7 @@ wget https://github.com/CAU-TeamLiuJF/FSBLUP/releases/download/example/example.z
 unzip example.zip
 ```
 
-## Data input
+## DATA INPUT
 
 ### Phenotype data
 
@@ -153,10 +160,9 @@ The individual IDs should be row names, followed by the omics feature measures f
 
 To run `FSBLUP`, several basic data should provide: the phenotype data (IDs in first column) and three matrices (IDs in row and col names) or pedigree (three columns: ID\|Sire\|Dam), genomic (IDs in row names), and omics data (IDs in row names). `FSBLUP` will try to adjust same order for data before analysis.
 
+0.  Read example data
 
-0. Read example data 
-
-```r
+``` r
 library(tidyverse)
 library(FSBLUP)
 phenotype = read.csv("../test/test_pheno.csv")
@@ -166,7 +172,6 @@ omic = read.csv("../test/test_omic.csv") %>% column_to_rownames(colnames(.)[1]) 
 A_mat = read.csv("../test/test_matA.csv")  %>% column_to_rownames(colnames(.)[1]) %>% as.matrix()
 G_mat = read.csv("../test/test_matG.csv") %>% column_to_rownames(colnames(.)[1]) %>% as.matrix()
 O_mat = read.csv("../test/test_matO.csv") %>% column_to_rownames(colnames(.)[1]) %>% as.matrix()
-
 ```
 
 1.  Run with supplied matrices
