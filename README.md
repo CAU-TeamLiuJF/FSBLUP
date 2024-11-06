@@ -9,7 +9,7 @@
 ## CONTENES
 
 -   [OVERVIEW](#overview)
--   [GETTING STARTED](#getting-started)
+-   [GETTING STARTED](#getting-started)<img src="https://raw.githubusercontent.com/CAU-TeamLiuJF/FSBLUP/master/figures/logo.png" height="250" align="right" />
     -   [Installation](#installation)
     -   [Test datasets](#test-datasets)
 -   [Data input](#data-input)
